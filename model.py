@@ -28,6 +28,7 @@ class Paddle(object):
 
     def update(self):
         """ update the state of the paddle """
+        #add a constraint for position to stop at wall
         self.x += self.vx
 
     def __str__(self):
@@ -35,12 +36,12 @@ class Paddle(object):
                                                            self.width,
                                                            self.x,
                                                            self.y)
-                                                           
+
 class BrickBreakerModel(object):
     """ Encodes a model of the game state """
     def __init__(self, size):
         self.bricks = []
-        self.width = size[0]
+        self.width = size[0] #screen parameters
         self.height = size[1]
         self.brick_width = 100
         self.brick_height = 20
