@@ -17,6 +17,20 @@ class Brick(pygame.sprite.Sprite): #changed object to sprite for collision
                                                           self.x,
                                                           self.y)
 
+class Arrow(pygame.sprite.Sprite):
+    """ Encodes the state of the hero's arrows in the game """
+    def __init__(self,height,width,x,y):
+        self.height = height
+        self.width = width
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return "Arrow height=%f, width=%f, x=%f, y=%f" % (self.height,
+                                                          self.width,
+                                                          self.x,
+                                                          self.y)                                                          
+
 class Hero(pygame.sprite.Sprite):
     """ Encodes the state of the hero in the game """
     def __init__(self, height, width, x, y):
@@ -33,8 +47,10 @@ class Hero(pygame.sprite.Sprite):
         #add a constraint for position to stop at wall
         self.x += self.vx
 
-        #sprite.spritecollide(Hero, Arrow) this will be used for collision detection
-
+        #this will be used for collision detection:
+        #monster_hit = sprite.spritecollide(hero, fireball_group, True)
+        #if monster_hit:
+        #   #change health attribute of hero
 
     def __str__(self):
         return "Hero height=%f, width=%f, x=%f, y=%f" % (self.height,
@@ -63,13 +79,16 @@ class BrickBreakerModel(object):
                                          y))
         self.hero = Hero(20, 100, 200, self.height - 30)
 
+        #hero_group = pygame.sprite.Group()
+        #hero_group.add(hero) #adds hero to group
+
+        #fireball_group = pygame.sprite.Group()
+        #fireball_group.add(fireball)
+
     def update(self):
         """ Update the game state (currently only tracking the hero) """
         self.hero.update()
-        
-        #hero_health = pygame.sprite.Group()
-        #hero_health.add(hero) #adds hero to group
-        #hero_health.add(brick) #will be fireball not brick
+
 
     def __str__(self):
         output_lines = []
