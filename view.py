@@ -26,8 +26,8 @@ class PyGameWindowView(object):
                                          brick.height))
         pygame.draw.rect(self.screen,
                          pygame.Color(255, 0, 0),
-                         pygame.Rect(self.model.paddle.x,
-                                     self.model.paddle.y,
-                                     self.model.paddle.width,
-                                     self.model.paddle.height))
+                         pygame.Rect(self.model.hero.x,
+                                     self.model.hero.y,
+                                     self.model.hero.width,
+                                     self.model.hero.height))
         pygame.display.update()
