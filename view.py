@@ -30,4 +30,11 @@ class PyGameWindowView(object):
                                      self.model.hero.y,
                                      self.model.hero.width,
                                      self.model.hero.height))
+
+        pygame.draw.rect(self.screen,
+                         pygame.Color(255, 0, 0),
+                         pygame.Rect(self.model.monster.x,
+                                     self.model.monster.y,
+                                     self.model.monster.width,
+                                     self.model.monster.height))
         pygame.display.update()
