@@ -36,7 +36,7 @@ class Fireball(Arrow):
 
 class Hero(pygame.sprite.Sprite):
     """ Encodes the state of the hero in the game """
-    def __init__(self, health, height, width, x, y):
+    def __init__(self, health, height, width, x, y, vx):
         """ Initialize a hero with the specified health, height, width,
             and position (x,y) """
         self.health = health
@@ -44,7 +44,7 @@ class Hero(pygame.sprite.Sprite):
         self.width = width
         self.x = x
         self.y = y
-        self.vx = 0.0
+        self.vx = vx
 
     def update(self):
         """ update the state of the hero """
@@ -69,7 +69,12 @@ class Monster(Hero): #framework for later
 
     def update(self):
         """updates state of the monster """
-        self.x += 5 #this should be constant movement
+        if self.x >= 620: #size of screen is 0-640
+            self.vx = -0.5 #monster moves with constant speed
+        elif self.x < 30: #monster switches direction near edge of screen
+            self.vx = 0.5
+
+        self.x += self.vx
         #health can increase and decrease depending on arrow or cookie
 
         #this will be used for collision detection:
@@ -96,8 +101,8 @@ class BrickBreakerModel(object):
                                          self.brick_width,
                                          x,
                                          y))
-        self.hero = Hero(100, 20, 100, 200, self.height - 30)
-        self.monster = Monster(50, 20, 100, 200, self.height - 10)
+        self.hero = Hero(100, 20, 100, 200, self.height - 30, 0)
+        self.monster = Monster(50, 20, 100, 200, self.height - 50, 0.5)
 
         #hero_group = pygame.sprite.Group()
         #hero_group.add(hero) #adds hero to group

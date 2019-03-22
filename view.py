@@ -25,7 +25,7 @@ class PyGameWindowView(object):
                                          brick.width,
                                          brick.height))
         pygame.draw.rect(self.screen,
-                         pygame.Color(255, 0, 0),
+                         pygame.Color(0, 0, 255),
                          pygame.Rect(self.model.hero.x,
                                      self.model.hero.y,
                                      self.model.hero.width,
