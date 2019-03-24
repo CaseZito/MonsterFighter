@@ -19,7 +19,8 @@ class Brick(pygame.sprite.Sprite): #going to be health bar
 
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
-    def __init__(self,height,width,x,y):
+    def __init__(self, damage, height,width,x,y):
+        self.damage = damage
         self.height = height
         self.width = width
         self.x = x
@@ -30,6 +31,9 @@ class Arrow(pygame.sprite.Sprite):
                                                           self.width,
                                                           self.x,
                                                           self.y)
+
+class Cookie(Arrow): #damage is actually opposite for this class
+    """Encodes the state of the hero's cookies in the game """
 
 class Fireball(Arrow):
     """Encodes the state of the monster's fireballs in the game """
@@ -46,6 +50,11 @@ class Hero(pygame.sprite.Sprite):
         self.y = y
         self.vx = vx
 
+    def lower_heatlh(self, points):
+        """ Lowers hero's health by given number of points"""
+        self.health -= points
+        #to be used when fireball hits hero
+
     def update(self):
         """ update the state of the hero """
         #add a constraint for position to stop at wall
@@ -57,7 +66,7 @@ class Hero(pygame.sprite.Sprite):
         #if monster_hit:
         #   #change health attribute of hero
 
-    def __str__(self):
+    def __str__(self): #unsure how to change "hero" to "monster" in monster class
         return "Hero health =%f, height=%f, width=%f, x=%f, y=%f" % (self.health,
                                                                      self.height,
                                                                      self.width,
@@ -66,6 +75,10 @@ class Hero(pygame.sprite.Sprite):
 
 class Monster(Hero): #framework for later
     """ Encodes the state of the monster in the game """
+
+    def raise_health(self, points):
+        """ Raises monster's health by given number of points """
+        self.health += points
 
     def update(self):
         """updates state of the monster """
