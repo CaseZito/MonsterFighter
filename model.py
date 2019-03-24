@@ -40,9 +40,13 @@ class Fireball(Arrow):
 
 class Hero(pygame.sprite.Sprite):
     """ Encodes the state of the hero in the game """
-    def __init__(self, health, height, width, x, y, vx):
+    def __init__(self, name, health, height, width, x, y, vx):
         """ Initialize a hero with the specified health, height, width,
             and position (x,y) """
+        #can be used once we have pixel art for character
+        #pygame.sprite.Sprite.__init__(self)
+        #self.image, self.rect = load_image(name+'.png',-1)
+        self.name = name
         self.health = health
         self.height = height
         self.width = width
@@ -67,7 +71,7 @@ class Hero(pygame.sprite.Sprite):
         #   #change health attribute of hero
 
     def __str__(self): #unsure how to change "hero" to "monster" in monster class
-        return "Hero health =%f, height=%f, width=%f, x=%f, y=%f" % (self.health,
+        return self.name + " health =%f, height=%f, width=%f, x=%f, y=%f" % (self.health,
                                                                      self.height,
                                                                      self.width,
                                                                      self.x,
@@ -114,8 +118,8 @@ class BrickBreakerModel(object):
                                          self.brick_width,
                                          x,
                                          y))
-        self.hero = Hero(100, 20, 100, 200, self.height - 30, 0)
-        self.monster = Monster(50, 20, 100, 200, self.height - 50, 0.5)
+        self.hero = Hero("Hero", 100, 20, 100, 200, self.height - 30, 0)
+        self.monster = Monster("Monster", 50, 20, 100, 200, self.height - 50, 0.5)
 
         #hero_group = pygame.sprite.Group()
         #hero_group.add(hero) #adds hero to group
@@ -135,5 +139,6 @@ class BrickBreakerModel(object):
         for brick in self.bricks:
             output_lines.append(str(brick))
         output_lines.append(str(self.hero))
+        output_lines.append(str(self.monster))
         # print one item per line
         return "\n".join(output_lines)
