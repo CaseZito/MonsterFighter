@@ -19,7 +19,7 @@ class Brick(pygame.sprite.Sprite): #going to be health bar
 
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
-    def __init__(self, damage, height,width,x,y):
+    def __init__(self, damage, height, width,x,y):
         self.damage = damage
         self.height = height
         self.width = width
@@ -31,6 +31,10 @@ class Arrow(pygame.sprite.Sprite):
                                                           self.width,
                                                           self.x,
                                                           self.y)
+
+    def update(self, character):
+        self.x = character.x
+        self.y = character.y
 
 class Cookie(Arrow): #damage is actually opposite for this class
     """Encodes the state of the hero's cookies in the game """
@@ -119,10 +123,14 @@ class BrickBreakerModel(object):
                                          x,
                                          y))
         self.hero = Hero("Hero", 100, 20, 100, 200, self.height - 30, 0)
+        self.arrow = Arrow(10, 3, 1, 200, 30)
         self.monster = Monster("Monster", 50, 20, 100, 200, self.height - 50, 0.5)
 
-        #hero_group = pygame.sprite.Group()
-        #hero_group.add(hero) #adds hero to group
+        #arrow_group = pygame.sprite.Group()
+        #arrow_group.add(arrow)
+
+        #cookie_group = pygame.sprite.Group()
+        #cookie_group.add(cookie)
 
         #fireball_group = pygame.sprite.Group()
         #fireball_group.add(fireball)
@@ -131,7 +139,7 @@ class BrickBreakerModel(object):
         """ Update the game state (currently only tracking the hero) """
         self.hero.update()
         self.monster.update()
-
+        self.arrow.update(self.hero)
 
     def __str__(self):
         output_lines = []
@@ -139,6 +147,7 @@ class BrickBreakerModel(object):
         for brick in self.bricks:
             output_lines.append(str(brick))
         output_lines.append(str(self.hero))
+        output_lines.append(str(self.arrow))
         output_lines.append(str(self.monster))
         # print one item per line
         return "\n".join(output_lines)
