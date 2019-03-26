@@ -37,4 +37,12 @@ class PyGameWindowView(object):
                                      self.model.monster.y,
                                      self.model.monster.width,
                                      self.model.monster.height))
+
+        for arrow in self.model.arrow_group.sprites():
+            pygame.draw.rect(self.screen,
+                             pygame.Color(0, 255, 0),
+                             pygame.Rect(self.model.arrow.x,
+                                         self.model.arrow.y,
+                                         self.model.arrow.width,
+                                         self.model.arrow.height))
         pygame.display.update()

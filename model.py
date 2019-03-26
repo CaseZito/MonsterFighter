@@ -19,22 +19,23 @@ class Brick(pygame.sprite.Sprite): #going to be health bar
 
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
-    def __init__(self, damage, height, width,x,y):
+    def __init__(self, damage, height, width,x,y,vy):
         self.damage = damage
         self.height = height
         self.width = width
         self.x = x
         self.y = y
+        self.vy = vy
 
     def __str__(self):
         return "Arrow height=%f, width=%f, x=%f, y=%f" % (self.height,
                                                           self.width,
                                                           self.x,
-                                                          self.y)
+                                                          self.y,
+                                                          self.vy)
 
-    def update(self, character):
-        self.x = character.x
-        self.y = character.y
+    def update(self):
+        self.y += self.vy #moves w/ constant v upwards
 
 class Cookie(Arrow): #damage is actually opposite for this class
     """Encodes the state of the hero's cookies in the game """
@@ -101,7 +102,7 @@ class Monster(Hero): #framework for later
         #this will be used for collision detection:
         #hero_hit = sprite.spritecollide(monster, arrow_group, True)
         #if hero_hit:
-        #   #change health attribute of monster
+        #   #change health attribute
 
 class BrickBreakerModel(object):
     """ Encodes a model of the game state """
@@ -123,10 +124,9 @@ class BrickBreakerModel(object):
                                          x,
                                          y))
         self.hero = Hero("Hero", 100, 20, 100, 200, self.height - 30, 0)
-        self.arrow = Arrow(10, 3, 1, 200, 30)
         self.monster = Monster("Monster", 50, 20, 100, 200, self.height - 50, 0.5)
 
-        #arrow_group = pygame.sprite.Group()
+        self.arrow_group = pygame.sprite.Group()
         #arrow_group.add(arrow)
 
         #cookie_group = pygame.sprite.Group()
@@ -134,12 +134,15 @@ class BrickBreakerModel(object):
 
         #fireball_group = pygame.sprite.Group()
         #fireball_group.add(fireball)
+    def shoot_arrow(self, x, y, vy):
+        self.arrow = Arrow(10, 3, 1, x, y, vy)
+        self.arrow_group.add(self.arrow)
 
     def update(self):
         """ Update the game state (currently only tracking the hero) """
         self.hero.update()
         self.monster.update()
-        self.arrow.update(self.hero)
+        self.arrow_group.update()
 
     def __str__(self):
         output_lines = []
@@ -147,7 +150,6 @@ class BrickBreakerModel(object):
         for brick in self.bricks:
             output_lines.append(str(brick))
         output_lines.append(str(self.hero))
-        output_lines.append(str(self.arrow))
         output_lines.append(str(self.monster))
         # print one item per line
         return "\n".join(output_lines)
