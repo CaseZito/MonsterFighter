@@ -20,6 +20,7 @@ class Brick(pygame.sprite.Sprite): #going to be health bar
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
     def __init__(self, damage, height, width,x,y,vy):
+        super().__init__()
         self.damage = damage
         self.height = height
         self.width = width
