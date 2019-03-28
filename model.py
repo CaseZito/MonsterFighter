@@ -36,7 +36,7 @@ class Arrow(pygame.sprite.Sprite):
                                                           self.vy)
 
     def update(self):
-        self.y += self.vy #moves w/ constant v upwards
+        self.y -= self.vy #moves w/ constant v upwards
 
 class Cookie(Arrow): #damage is actually opposite for this class
     """Encodes the state of the hero's cookies in the game """
@@ -52,6 +52,8 @@ class Hero(pygame.sprite.Sprite):
         #can be used once we have pixel art for character
         #pygame.sprite.Sprite.__init__(self)
         #self.image, self.rect = load_image(name+'.png',-1)
+        #self.image, self.rect = pygame.image.load('Pixel_Knight.png').convert()
+
         self.name = name
         self.health = health
         self.height = height
@@ -125,7 +127,7 @@ class BrickBreakerModel(object):
                                          x,
                                          y))
         self.hero = Hero("Hero", 100, 20, 100, 200, self.height - 30, 0)
-        self.monster = Monster("Monster", 50, 20, 100, 200, self.height - 50, 0.5)
+        self.monster = Monster("Monster", 50, 20, 100, 200, self.height - 450, 0.5)
 
         self.arrow_group = pygame.sprite.Group()
         #arrow_group.add(arrow)
@@ -136,7 +138,7 @@ class BrickBreakerModel(object):
         #fireball_group = pygame.sprite.Group()
         #fireball_group.add(fireball)
     def shoot_arrow(self, x, y, vy):
-        self.arrow = Arrow(10, 3, 1, x, y, vy)
+        self.arrow = Arrow(10, 30, 10, x, y, vy)
         self.arrow_group.add(self.arrow)
 
     def update(self):
