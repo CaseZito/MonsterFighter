@@ -7,9 +7,7 @@ from model import Monster
 from model import Arrow
 from model import Cookie
 from model import Fireball
-from view import PyGameWindowView
-from controller.keyboard_controller import PyGameKeyboardController
-from controller.mouse_controller import PyGameMouseController
+
 
 
 
