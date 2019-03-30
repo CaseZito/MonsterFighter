@@ -13,7 +13,7 @@ and modular code.
 
 import time
 import pygame
-from model import BrickBreakerModel
+from model import MonsterFighterModel
 from view import PyGameWindowView
 from controller.keyboard_controller import PyGameKeyboardController
 from controller.mouse_controller import PyGameMouseController
@@ -25,7 +25,7 @@ def start_game(size):
     """
     pygame.init()
 
-    model = BrickBreakerModel(size)
+    model = MonsterFighterModel(size)
     print(model)
     view = PyGameWindowView(model, size)
     #controller = PyGameKeyboardController(model)
