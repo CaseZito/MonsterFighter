@@ -1,5 +1,5 @@
 """
-BrickBreaker view code
+MonsterFighter view code
 """
 
 import pygame

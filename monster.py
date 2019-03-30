@@ -1,8 +1,10 @@
 """
-MonsterFighter model code
+@author: Mellie Zito and Anthony K
 """
 
 import pygame
+import pygame.locals
+import time
 
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
@@ -131,3 +133,102 @@ class MonsterFighterModel(object):
         output_lines.append(str(self.monster))
         # print one item per line
         return "\n".join(output_lines)
+
+
+
+"""
+MonsterFighter view code
+"""
+
+
+class PyGameWindowView(object):
+    """ A view of brick breaker rendered in a Pygame window """
+    def __init__(self, model, size):
+        """ Initialize the view with a reference to the model and the
+            specified game screen dimensions (represented as a tuple
+            containing the width and height """
+        self.model = model
+        self.screen = pygame.display.set_mode(size)
+
+    def draw(self):
+        """ Draw the current game state to the screen """
+        self.screen.fill(pygame.Color(0,0,0))
+
+        #self.hero_sprites.draw(self.screen)
+
+        pygame.draw.rect(self.screen,
+                         pygame.Color(0, 0, 255),
+                         pygame.Rect(self.model.hero.x,
+                                     self.model.hero.y,
+                                     self.model.hero.width,
+                                     self.model.hero.height))
+
+        pygame.draw.rect(self.screen,
+                         pygame.Color(255, 0, 0),
+                         pygame.Rect(self.model.monster.x,
+                                     self.model.monster.y,
+                                     self.model.monster.width,
+                                     self.model.monster.height))
+
+        for arrow in self.model.arrow_group.sprites():
+            pygame.draw.rect(self.screen,
+                             pygame.Color(0, 255, 0),
+                             pygame.Rect(self.model.arrow.x,
+                                         self.model.arrow.y,
+                                         self.model.arrow.width,
+                                         self.model.arrow.height))
+        pygame.display.update()
+
+
+
+
+"""
+BrickBreaker controller code
+"""
+
+class PyGameMouseController(object):
+    """ A controller that uses the mouse to move the hero """
+    def __init__(self,model):
+        self.model = model
+
+    def handle_event(self,event):
+        """ Handle the mouse event so the hero tracks the mouse position """
+        if event.type == pygame.locals.MOUSEMOTION:
+            self.model.hero.x = event.pos[0] - self.model.hero.width/2.0
+        if event.type == pygame.locals.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.model.shoot_arrow(event.pos[0], self.model.hero.y, 3)
+
+
+
+
+"""
+Monster final code
+"""
+
+def start_game(size):
+    """
+    Given screen 'size' as (x,y) tuple, start BrickBreaker game
+    """
+    pygame.init()
+
+    model = MonsterFighterModel(size)
+    print(model)
+    view = PyGameWindowView(model, size)
+    controller = PyGameMouseController(model)
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.locals.QUIT:
+                running = False
+            controller.handle_event(event)
+        model.update()
+        view.draw()
+        time.sleep(.001)
+
+    pygame.quit()
+
+if __name__ == '__main__':
+    size = (640, 480)
+    start_game(size)

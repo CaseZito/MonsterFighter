@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-This is a worked example of applying the Model-View-Controller (MVC)
-design pattern to the creation of a simple arcade game (in this case
-Brick Breaker).
+This is Monster Fighter, a simple arcade game where a hero
+shoots arrows at a mosnter. It uses the Model-View-Controller (MVC)
+design pattern.
 
-We will create our game in stages so that you can see the process by
-which the MVC pattern can be utilized to create clean, extensible,
-and modular code.
-
-@author: SoftDesProfs
+@author: Mellie Zito and Anthony
 """
 
 import time
