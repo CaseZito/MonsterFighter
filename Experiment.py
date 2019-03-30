@@ -158,6 +158,7 @@ class monster_fighter_main:
                 if event.type == pygame.locals.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             self.shoot_arrow(event.pos[0], self.hero.top.rect, 3)
+            self.screen.fill(pygame.Color(0,0,0))
             self.hero_sprites.draw(self.screen)
             pygame.display.flip()
 
