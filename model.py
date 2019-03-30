@@ -7,6 +7,7 @@ import pygame
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
     def __init__(self, damage, height, width,x,y,vy):
+        pygame.sprite.Sprite.__init__(self)
         super().__init__()
         self.damage = damage
         self.height = height
@@ -31,6 +32,9 @@ class Cookie(Arrow): #damage is actually opposite for this class
 
 class Fireball(Arrow):
     """Encodes the state of the monster's fireballs in the game """
+
+    def update(self):
+        self.y += self.vy #moves w/ constant v upwards
 
 class Hero(pygame.sprite.Sprite):
     """ Encodes the state of the hero in the game """
@@ -81,7 +85,11 @@ class Monster(Hero): #framework for later
         """ Raises monster's health by given number of points """
         self.health += points
 
-    def update(self, proj_group):
+    def shoot_fireball(self, model):
+        model.fireball = Fireball(10, 30, 10, self.x, self.y, 3)
+        model.fireball_group.add(model.fireball)
+
+    def update(self, model, proj_group):
         """updates state of the monster """
         if self.x >= 620: #size of screen is 0-640
             self.vx = -0.5 #monster moves with constant speed
@@ -89,14 +97,18 @@ class Monster(Hero): #framework for later
             self.vx = 0.5
 
         self.x += self.vx
-        #health can increase and decrease depending on arrow or cookie
-        #this will be used for collision detection:
+        self.shoot_fireball(model)
 
-        hero_hit = pygame.sprite.spritecollide(self, proj_group, True)
-        if hero_hit:
-            print("HEY")
-            self.lower_health(10)
-            print(self)
+        for a in model.arrow_group.sprites():
+            if self.y == a.y and -100 < self.x - a.x < 0:
+                print("ARGGG")
+                self.lower_health(10)
+                print(self)
+                
+        #hero_hit = pygame.sprite.spritecollide(self, proj_group, True)
+        #if hero_hit:
+                #self.lower_health(10)
+                #print(self)
 
 class MonsterFighterModel(object):
     """ Encodes a model of the game state """
@@ -106,15 +118,10 @@ class MonsterFighterModel(object):
 
         self.hero = Hero("Hero", 100, 20, 100, 200, self.height - 30, 0)
         self.monster = Monster("Monster", 50, 20, 100, 200, 0, 0.5)
-        self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
         self.arrow_group = pygame.sprite.Group()
-        #arrow_group.add(arrow)
-
+        self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
-        #cookie_group.add(cookie)
 
-        #fireball_group = pygame.sprite.Group()
-        #fireball_group.add(fireball)
     def shoot_arrow(self, x, y, vy):
         self.arrow = Arrow(10, 30, 10, x, y, vy)
         self.arrow_group.add(self.arrow)
@@ -122,8 +129,9 @@ class MonsterFighterModel(object):
     def update(self):
         """ Update the game state (currently only tracking the hero) """
         self.hero.update()
+        self.monster.update(self, self.arrow_group)
         self.arrow_group.update()
-        self.monster.update(self.arrow_group)
+        self.fireball_group.update()
 
     def __str__(self):
         output_lines = []
