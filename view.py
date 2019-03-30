@@ -1,5 +1,5 @@
 """
-BrickBreaker view code
+MonsterFighter view code
 """
 
 import pygame
@@ -17,13 +17,9 @@ class PyGameWindowView(object):
     def draw(self):
         """ Draw the current game state to the screen """
         self.screen.fill(pygame.Color(0,0,0))
-        for brick in self.model.bricks:
-            pygame.draw.rect(self.screen,
-                             pygame.Color(255, 255, 255),
-                             pygame.Rect(brick.x,
-                                         brick.y,
-                                         brick.width,
-                                         brick.height))
+
+        #self.hero_sprites.draw(self.screen)
+
         pygame.draw.rect(self.screen,
                          pygame.Color(0, 0, 255),
                          pygame.Rect(self.model.hero.x,
@@ -45,4 +41,12 @@ class PyGameWindowView(object):
                                          self.model.arrow.y,
                                          self.model.arrow.width,
                                          self.model.arrow.height))
+
+        for fireball in self.model.fireball_group.sprites():
+            pygame.draw.rect(self.screen,
+                             pygame.Color(255, 0, 0),
+                             pygame.Rect(self.model.fireball.x,
+                                         self.model.fireball.y,
+                                         self.model.fireball.width,
+                                         self.model.fireball.height))
         pygame.display.update()
