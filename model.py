@@ -1,6 +1,7 @@
 """
 BrickBreaker model code
 """
+
 import pygame
 
 class Brick(pygame.sprite.Sprite): #going to be health bar
@@ -27,6 +28,7 @@ class Arrow(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.vy = vy
+        self.rect = pygame.Rect((x,y),(width,height))
 
     def __str__(self):
         return "Arrow height=%f, width=%f, x=%f, y=%f" % (self.height,
@@ -50,9 +52,9 @@ class Hero(pygame.sprite.Sprite):
         """ Initialize a hero with the specified health, height, width,
             and position (x,y) """
         #can be used once we have pixel art for character
-        #pygame.sprite.Sprite.__init__(self)
+        pygame.sprite.Sprite.__init__(self)
         #self.image, self.rect = load_image(name+'.png',-1)
-        #self.image, self.rect = pygame.image.load('Pixel_Knight.png').convert()
+        #self.image, self.rect = pygame.image.load('Pixel_Knight.png')
 
         self.name = name
         self.health = health
@@ -61,8 +63,9 @@ class Hero(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.vx = vx
+        self.rect = pygame.Rect((x,y),(width,height))
 
-    def lower_heatlh(self, points):
+    def lower_health(self, points):
         """ Lowers hero's health by given number of points"""
         self.health -= points
         #to be used when fireball hits hero
@@ -92,7 +95,7 @@ class Monster(Hero): #framework for later
         """ Raises monster's health by given number of points """
         self.health += points
 
-    def update(self):
+    def update(self, thing, proj_group):
         """updates state of the monster """
         if self.x >= 620: #size of screen is 0-640
             self.vx = -0.5 #monster moves with constant speed
@@ -101,11 +104,13 @@ class Monster(Hero): #framework for later
 
         self.x += self.vx
         #health can increase and decrease depending on arrow or cookie
-
         #this will be used for collision detection:
-        #hero_hit = sprite.spritecollide(monster, arrow_group, True)
-        #if hero_hit:
-        #   #change health attribute
+
+        hero_hit = pygame.sprite.spritecollide(self, proj_group, True)
+        if hero_hit:
+            print("HEY")
+            self.lower_health(10)
+            print(self)
 
 class BrickBreakerModel(object):
     """ Encodes a model of the game state """
@@ -127,8 +132,8 @@ class BrickBreakerModel(object):
                                          x,
                                          y))
         self.hero = Hero("Hero", 100, 20, 100, 200, self.height - 30, 0)
-        self.monster = Monster("Monster", 50, 20, 100, 200, self.height - 450, 0.5)
-
+        self.monster = Monster("Monster", 50, 20, 100, 200, 0, 0.5)
+        self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
         self.arrow_group = pygame.sprite.Group()
         #arrow_group.add(arrow)
 
@@ -144,8 +149,8 @@ class BrickBreakerModel(object):
     def update(self):
         """ Update the game state (currently only tracking the hero) """
         self.hero.update()
-        self.monster.update()
         self.arrow_group.update()
+        self.monster.update(self.arrow_group)
 
     def __str__(self):
         output_lines = []

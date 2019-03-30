@@ -18,13 +18,15 @@ class PyGameWindowView(object):
         """ Draw the current game state to the screen """
         self.screen.fill(pygame.Color(0,0,0))
 
+        #self.hero_sprites.draw(self.screen)
+
         pygame.draw.rect(self.screen,
                          pygame.Color(0, 0, 255),
                          pygame.Rect(self.model.hero.x,
                                      self.model.hero.y,
                                      self.model.hero.width,
                                      self.model.hero.height))
-        pygame.Surface
+
         pygame.draw.rect(self.screen,
                          pygame.Color(255, 0, 0),
                          pygame.Rect(self.model.monster.x,
