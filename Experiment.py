@@ -119,7 +119,7 @@ class monster_fighter_main:
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.hero = Hero('Hero', 100, 0, 300, 0)
-        self.monster = Monster("Monster", 50, 0, 0, 0.5)
+        self.monster = Monster("Monster", 50, 200, 0, 0.5)
         self.arrow_group = pygame.sprite.Group()
         #self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
@@ -134,9 +134,19 @@ class monster_fighter_main:
         self.monster.update(self, self.arrow_group)
         self.arrow_group.update()
         #self.fireball_group.update()
+        self.hero_sprites.draw(self.screen)
+        self.monster_sprites.draw(self.screen)
+        #for arrow in self.arrow_group.sprites():
+        #    self.arrow_sprites = pygame.sprite.RenderPlain((self.arrow))
+        #    self.arrow_sprites.draw(self.screen)
+        for arrow in self.arrow_group.sprites():
+            pygame.draw.rect(self.screen,
+                             pygame.Color(0, 255, 0),
+                             self.arrow.rect)
 
     def LoadSprites(self):
         self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
+        self.monster_sprites = pygame.sprite.RenderPlain((self.monster))
 
     def __str__(self):
         output_lines = []
@@ -147,7 +157,6 @@ class monster_fighter_main:
 
     def MainLoop(self):
         self.LoadSprites()
-        self.update()
         print(self)
         while 1:
             for event in pygame.event.get():
@@ -157,9 +166,10 @@ class monster_fighter_main:
                     self.hero.rect.left = event.pos[0] - self.hero.rect.width/2.0
                 if event.type == pygame.locals.MOUSEBUTTONDOWN:
                         if event.button == 1:
-                            self.shoot_arrow(event.pos[0], self.hero.top.rect, 3)
+                            self.shoot_arrow(event.pos[0], self.hero.rect.top, 3)
             self.screen.fill(pygame.Color(0,0,0))
-            self.hero_sprites.draw(self.screen)
+            self.update()
+            print(self)
             pygame.display.flip()
 
 
