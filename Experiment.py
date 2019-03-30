@@ -55,7 +55,7 @@ class Hero(pygame.sprite.Sprite):
         """ Initialize a hero with the specified health, height, width,
             and position (x,y) """
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('Pixel_Knight.png', -1)
+        self.image, self.rect = load_image(name+'.png', -1)
         self.image = pygame.transform.scale(self.image, (200,200))
         self.rect.height = 200
         self.rect.width = 200
@@ -120,8 +120,8 @@ class monster_fighter_main:
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.hero = Hero('Hero', 100, 0, 0, 0)
-        self.monster = Monster("Monster", 50, 200, 0, 0.5)
+        self.hero = Hero('Hero', 100, 0, 300, 0)
+        self.monster = Monster("Monster", 50, 0, 0, 0.5)
         self.arrow_group = pygame.sprite.Group()
         #self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
