@@ -83,17 +83,17 @@ class Monster(Hero): #framework for later
     def update(self, model, proj_group):
         """updates state of the monster """
         if self.rect.left >= 620: #size of screen is 0-640
-            self.vx = -1 #monster moves with constant speed
+            self.vx = -0.5 #monster moves with constant speed
         elif self.rect.left < 30: #monster switches direction near edge of screen
-            self.vx = 1
+            self.vx = 0.5
 
         self.rect.left += self.vx
         #self.shoot_fireball(model)
 
-        box = self.rect.width-40
+        box = self.rect.width-0
         if self.alive(): #monster can't be affected after its dead
             for a in model.arrow_group.sprites():
-                if self.rect.top == a.rect.top and (self.rect.left+box >= a.rect.left >= self.rect.left+40):
+                if self.rect.top == a.rect.top and (self.rect.left+box >= a.rect.left >= self.rect.left+0):
                     print("ARGGG")
                     self.lower_health(10)
                     print("Monster Health is " + str(self.health) + " points")
@@ -113,7 +113,7 @@ class monster_fighter_main:
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.hero = Hero('Hero', 100, 200, 200, 0, 300, 0) #name, health, height, width, x, y, vx
-        self.monster = Monster("Monster", 50, 200, 200, 200, 0, 1) #only moves when vx>1
+        self.monster = Monster("Monster", 50, 120, 120, 200, 0, 0.5) #only moves when vx>1
         self.arrow_group = pygame.sprite.Group()
         #self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
