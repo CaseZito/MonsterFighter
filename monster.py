@@ -86,10 +86,10 @@ class Monster(Hero): #framework for later
 
     def update(self, model, proj_group):
         """updates state of the monster """
-        if self.rect.left >= 620: #size of screen is 0-640
-            self.vx = -0.5 #monster moves with constant speed
-        elif self.rect.left < 30: #monster switches direction near edge of screen
-            self.vx = 0.5
+        if self.rect.left >= 600: #size of screen is 0-640
+            self.vx = -1 #monster moves with constant speed
+        elif self.rect.left < -20: #monster switches direction near edge of screen
+            self.vx = 1
 
         self.rect.left += self.vx
         #self.shoot_fireball(model)
@@ -117,7 +117,7 @@ class monster_fighter_main:
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.hero = Hero('Hero', 100, 200, 200, 0, 300, 0) #name, health, height, width, x, y, vx
-        self.monster = Monster("Monster", 50, 120, 120, 200, 0, 0.5) #only moves when vx>1
+        self.monster = Monster("Monster", 50, 120, 120, 200, 0, 1) #only moves when vx>1
         self.arrow_group = pygame.sprite.Group()
         #self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
@@ -168,6 +168,7 @@ class monster_fighter_main:
                             self.shoot_arrow(event.pos[0], self.hero.rect.top, 3)
             self.screen.fill(pygame.Color(0,0,0))
             self.LoadSprites()
+            time.sleep(.001)
             self.update()
             pygame.display.flip()
 
