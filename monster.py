@@ -1,32 +1,29 @@
-"""
-@author: Mellie Zito and Anthony K
-"""
+"""Authors: Mellie Z and Anthony K"""
 
-import pygame
-import pygame.locals
 import time
+import pygame
+from helpers import *
+from pygame.locals import *
+
 
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
     def __init__(self, damage, height, width,x,y,vy):
+        pygame.sprite.Sprite.__init__(self)
         super().__init__()
         self.damage = damage
-        self.height = height
-        self.width = width
-        self.x = x
-        self.y = y
-        self.vy = vy
         self.rect = pygame.Rect((x,y),(width,height))
+        self.vy = vy
 
     def __str__(self):
-        return "Arrow height=%f, width=%f, x=%f, y=%f" % (self.height,
-                                                          self.width,
-                                                          self.x,
-                                                          self.y,
-                                                          self.vy)
+        return "Arrow height=%f, width=%f, x=%f, y=%f, vy=%f" % (self.rect.height,
+                                                                 self.rect.width,
+                                                                 self.rect.left,
+                                                                 self.rect.top,
+                                                                 self.vy)
 
     def update(self):
-        self.y -= self.vy #moves w/ constant v upwards
+        self.rect.top -= self.vy #moves w/ constant v upwards
 
 class Cookie(Arrow): #damage is actually opposite for this class
     """Encodes the state of the hero's cookies in the game """
@@ -34,47 +31,38 @@ class Cookie(Arrow): #damage is actually opposite for this class
 class Fireball(Arrow):
     """Encodes the state of the monster's fireballs in the game """
 
+    def update(self):
+        self.rect.top += self.vy #moves w/ constant v upwards
+
 class Hero(pygame.sprite.Sprite):
     """ Encodes the state of the hero in the game """
-    def __init__(self, name, health, height, width, x, y, vx):
+    def __init__(self, name, health, x, y, vx):
         """ Initialize a hero with the specified health, height, width,
             and position (x,y) """
-        #can be used once we have pixel art for character
         pygame.sprite.Sprite.__init__(self)
-        #self.image, self.rect = load_image(name+'.png',-1)
-        #self.image, self.rect = pygame.image.load('Pixel_Knight.png')
-
+        self.image, self.rect = load_image(name+'.png', -1)
+        self.image = pygame.transform.scale(self.image, (200,200))
+        self.rect.height = 200
+        self.rect.width = 200
+        self.rect.left = x
+        self.rect.top =  y
         self.name = name
         self.health = health
-        self.height = height
-        self.width = width
-        self.x = x
-        self.y = y
         self.vx = vx
-        self.rect = pygame.Rect((x,y),(width,height))
 
     def lower_health(self, points):
         """ Lowers hero's health by given number of points"""
         self.health -= points
-        #to be used when fireball hits hero
 
     def update(self):
         """ update the state of the hero """
-        #add a constraint for position to stop at wall
-        self.x += self.vx
-        #health should only decrease
 
-        #this will be used for collision detection:
-        #monster_hit = sprite.spritecollide(hero, fireball_group, True)
-        #if monster_hit:
-        #   #change health attribute of hero
-
-    def __str__(self): #unsure how to change "hero" to "monster" in monster class
+    def __str__(self):
         return self.name + " health =%f, height=%f, width=%f, x=%f, y=%f" % (self.health,
-                                                                     self.height,
-                                                                     self.width,
-                                                                     self.x,
-                                                                     self.y)
+                                                                     self.rect.height,
+                                                                     self.rect.width,
+                                                                     self.rect.left,
+                                                                     self.rect.top)
 
 class Monster(Hero): #framework for later
     """ Encodes the state of the monster in the game """
@@ -83,40 +71,47 @@ class Monster(Hero): #framework for later
         """ Raises monster's health by given number of points """
         self.health += points
 
-    def update(self, proj_group):
+    #def shoot_fireball(self, model):
+    #    model.fireball = Fireball(10, 30, 10, self.rect.left, self.rect.top, 3)
+    #    model.fireball_group.add(model.fireball)
+
+    def update(self, model, proj_group):
         """updates state of the monster """
-        if self.x >= 620: #size of screen is 0-640
+        if self.rect.left >= 620: #size of screen is 0-640
             self.vx = -0.5 #monster moves with constant speed
-        elif self.x < 30: #monster switches direction near edge of screen
+        elif self.rect.left < 30: #monster switches direction near edge of screen
             self.vx = 0.5
 
-        self.x += self.vx
-        #health can increase and decrease depending on arrow or cookie
-        #this will be used for collision detection:
+        self.rect.left += self.vx
+        #self.shoot_fireball(model)
 
-        hero_hit = pygame.sprite.spritecollide(self, proj_group, True)
-        if hero_hit:
-            print("HEY")
-            self.lower_health(10)
-            print(self)
+        if self.alive(): #monster can't be affected after its dead
+            for a in model.arrow_group.sprites():
+                if self.rect.top == a.rect.top and -100 < self.rect.left - a.rect.left < 0:
+                    print("ARGGG")
+                    self.lower_health(10)
+                    print(self)
+                    a.kill()
+        #hero_hit = pygame.sprite.spritecollide(self, proj_group, True)
+        #if hero_hit:
+                #self.lower_health(10)
+                #print(self)
 
-class MonsterFighterModel(object):
-    """ Encodes a model of the game state """
-    def __init__(self, size):
-        self.width = size[0]
-        self.height = size[1]
 
-        self.hero = Hero("Hero", 100, 20, 100, 200, self.height - 30, 0)
-        self.monster = Monster("Monster", 50, 20, 100, 200, 0, 0.5)
-        self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
+
+
+class monster_fighter_main:
+    def __init__(self, width, height):
+        pygame.init()
+        self.width = width
+        self.height = height
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.hero = Hero('Hero', 100, 0, 300, 0)
+        self.monster = Monster("Monster", 50, 200, 0, 0.5)
         self.arrow_group = pygame.sprite.Group()
-        #arrow_group.add(arrow)
-
+        #self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
-        #cookie_group.add(cookie)
 
-        #fireball_group = pygame.sprite.Group()
-        #fireball_group.add(fireball)
     def shoot_arrow(self, x, y, vy):
         self.arrow = Arrow(10, 30, 10, x, y, vy)
         self.arrow_group.add(self.arrow)
@@ -124,111 +119,55 @@ class MonsterFighterModel(object):
     def update(self):
         """ Update the game state (currently only tracking the hero) """
         self.hero.update()
+        self.monster.update(self, self.arrow_group)
         self.arrow_group.update()
-        self.monster.update(self.arrow_group)
+        #self.fireball_group.update()
+        self.hero_sprites.draw(self.screen)
+        self.monster_sprites.draw(self.screen)
+        for arrow in self.arrow_group.sprites():
+            pygame.draw.rect(self.screen,
+                             pygame.Color(0, 255, 0),
+                             self.arrow.rect)
+
+    def LoadSprites(self):
+        self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
+        self.monster_sprites = pygame.sprite.RenderPlain((self.monster))
 
     def __str__(self):
         output_lines = []
         output_lines.append(str(self.hero))
         output_lines.append(str(self.monster))
+        for arrow in self.arrow_group.sprites():
+            output_lines.append(str(arrow))
         # print one item per line
         return "\n".join(output_lines)
 
-
-
-"""
-MonsterFighter view code
-"""
-
-
-class PyGameWindowView(object):
-    """ A view of brick breaker rendered in a Pygame window """
-    def __init__(self, model, size):
-        """ Initialize the view with a reference to the model and the
-            specified game screen dimensions (represented as a tuple
-            containing the width and height """
-        self.model = model
-        self.screen = pygame.display.set_mode(size)
-
-    def draw(self):
-        """ Draw the current game state to the screen """
-        self.screen.fill(pygame.Color(0,0,0))
-
-        #self.hero_sprites.draw(self.screen)
-
-        pygame.draw.rect(self.screen,
-                         pygame.Color(0, 0, 255),
-                         pygame.Rect(self.model.hero.x,
-                                     self.model.hero.y,
-                                     self.model.hero.width,
-                                     self.model.hero.height))
-
-        pygame.draw.rect(self.screen,
-                         pygame.Color(255, 0, 0),
-                         pygame.Rect(self.model.monster.x,
-                                     self.model.monster.y,
-                                     self.model.monster.width,
-                                     self.model.monster.height))
-
-        for arrow in self.model.arrow_group.sprites():
-            pygame.draw.rect(self.screen,
-                             pygame.Color(0, 255, 0),
-                             pygame.Rect(self.model.arrow.x,
-                                         self.model.arrow.y,
-                                         self.model.arrow.width,
-                                         self.model.arrow.height))
-        pygame.display.update()
+    def MainLoop(self):
+        self.LoadSprites()
+        print(self)
+        while 1:
+            if self.monster.alive() and self.monster.health <= 0:
+                self.monster.kill()
+                print("You have defeated the monster!")
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.locals.MOUSEMOTION:
+                    self.hero.rect.left = event.pos[0] - self.hero.rect.width/2.0
+                if event.type == pygame.locals.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            self.shoot_arrow(event.pos[0], self.hero.rect.top, 3)
+            self.screen.fill(pygame.Color(0,0,0))
+            self.update()
+            print(self)
+            pygame.display.flip()
 
 
 
 
-"""
-BrickBreaker controller code
-"""
-
-class PyGameMouseController(object):
-    """ A controller that uses the mouse to move the hero """
-    def __init__(self,model):
-        self.model = model
-
-    def handle_event(self,event):
-        """ Handle the mouse event so the hero tracks the mouse position """
-        if event.type == pygame.locals.MOUSEMOTION:
-            self.model.hero.x = event.pos[0] - self.model.hero.width/2.0
-        if event.type == pygame.locals.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    self.model.shoot_arrow(event.pos[0], self.model.hero.y, 3)
 
 
-
-
-"""
-Monster final code
-"""
-
-def start_game(size):
-    """
-    Given screen 'size' as (x,y) tuple, start BrickBreaker game
-    """
-    pygame.init()
-
-    model = MonsterFighterModel(size)
-    print(model)
-    view = PyGameWindowView(model, size)
-    controller = PyGameMouseController(model)
-
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.locals.QUIT:
-                running = False
-            controller.handle_event(event)
-        model.update()
-        view.draw()
-        time.sleep(.001)
-
-    pygame.quit()
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     size = (640, 480)
-    start_game(size)
+    MainWindow = monster_fighter_main(size[0], size[1])
+    MainWindow.MainLoop()
