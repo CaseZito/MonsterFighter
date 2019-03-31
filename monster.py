@@ -1,4 +1,9 @@
-"""Authors: Mellie Z and Anthony K"""
+"""@authors: Mellie Z and Anthony K
+
+
+This is Monster Fighter, a simple arcade game where a hero
+shoots arrows at a mosnter.
+"""
 
 import time
 import pygame
@@ -90,7 +95,7 @@ class Monster(Hero): #framework for later
                 if self.rect.top == a.rect.top and -100 < self.rect.left - a.rect.left < 0:
                     print("ARGGG")
                     self.lower_health(10)
-                    print(self)
+                    print("Monster Health is " + str(self.health) + " points")
                     a.kill()
         #hero_hit = pygame.sprite.spritecollide(self, proj_group, True)
         #if hero_hit:
@@ -107,7 +112,7 @@ class monster_fighter_main:
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.hero = Hero('Hero', 100, 0, 300, 0)
-        self.monster = Monster("Monster", 50, 200, 0, 0.5)
+        self.monster = Monster("Monster", 50, 200, 0, 3)
         self.arrow_group = pygame.sprite.Group()
         #self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
@@ -159,7 +164,6 @@ class monster_fighter_main:
                             self.shoot_arrow(event.pos[0], self.hero.rect.top, 3)
             self.screen.fill(pygame.Color(0,0,0))
             self.update()
-            print(self)
             pygame.display.flip()
 
 
