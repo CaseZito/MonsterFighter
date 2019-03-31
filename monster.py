@@ -13,11 +13,15 @@ from pygame.locals import *
 
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
-    def __init__(self, damage, height, width,x,y,vy):
+    def __init__(self, damage, height, width, x, y, vy):
         pygame.sprite.Sprite.__init__(self)
-        super().__init__()
         self.damage = damage
-        self.rect = pygame.Rect((x,y),(width,height))
+        self.image, self.rect = load_image('arrow.png', -1)
+        self.image = pygame.transform.scale(self.image, (height,width))
+        self.rect.height = height
+        self.rect.width = width
+        self.rect.left = x
+        self.rect.top =  y
         self.vy = vy
 
     def __str__(self):
@@ -119,7 +123,7 @@ class monster_fighter_main:
         #cookie_group = pygame.sprite.Group()
 
     def shoot_arrow(self, x, y, vy):
-        self.arrow = Arrow(10, 30, 10, x, y, vy)
+        self.arrow = Arrow(10, 30, 50, x, y, vy)
         self.arrow_group.add(self.arrow)
 
     def update(self):
@@ -131,13 +135,13 @@ class monster_fighter_main:
         self.hero_sprites.draw(self.screen)
         self.monster_sprites.draw(self.screen)
         for arrow in self.arrow_group.sprites():
-            pygame.draw.rect(self.screen,
-                             pygame.Color(0, 255, 0),
-                             self.arrow.rect)
+            self.arrow_sprites.draw(self.screen)
 
     def LoadSprites(self):
         self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
         self.monster_sprites = pygame.sprite.RenderPlain((self.monster))
+        for arrow in self.arrow_group.sprites():
+            self.arrow_sprites = pygame.sprite.RenderPlain((arrow))
 
     def __str__(self):
         output_lines = []
@@ -149,7 +153,6 @@ class monster_fighter_main:
         return "\n".join(output_lines)
 
     def MainLoop(self):
-        self.LoadSprites()
         print(self)
         while 1:
             if self.monster.alive() and self.monster.health <= 0:
@@ -164,6 +167,7 @@ class monster_fighter_main:
                         if event.button == 1:
                             self.shoot_arrow(event.pos[0], self.hero.rect.top, 3)
             self.screen.fill(pygame.Color(0,0,0))
+            self.LoadSprites()
             self.update()
             pygame.display.flip()
 
