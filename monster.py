@@ -41,14 +41,14 @@ class Fireball(Arrow):
 
 class Hero(pygame.sprite.Sprite):
     """ Encodes the state of the hero in the game """
-    def __init__(self, name, health, x, y, vx):
+    def __init__(self, name, health, height, width, x, y, vx):
         """ Initialize a hero with the specified health, height, width,
             and position (x,y) """
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image(name+'.png', -1)
-        self.image = pygame.transform.scale(self.image, (200,200))
-        self.rect.height = 200
-        self.rect.width = 200
+        self.image = pygame.transform.scale(self.image, (height,width))
+        self.rect.height = height
+        self.rect.width = width
         self.rect.left = x
         self.rect.top =  y
         self.name = name
@@ -83,16 +83,17 @@ class Monster(Hero): #framework for later
     def update(self, model, proj_group):
         """updates state of the monster """
         if self.rect.left >= 620: #size of screen is 0-640
-            self.vx = -0.5 #monster moves with constant speed
+            self.vx = -1 #monster moves with constant speed
         elif self.rect.left < 30: #monster switches direction near edge of screen
-            self.vx = 0.5
+            self.vx = 1
 
         self.rect.left += self.vx
         #self.shoot_fireball(model)
 
+        box = self.rect.width-40
         if self.alive(): #monster can't be affected after its dead
             for a in model.arrow_group.sprites():
-                if self.rect.top == a.rect.top and -100 < self.rect.left - a.rect.left < 0:
+                if self.rect.top == a.rect.top and (self.rect.left+box >= a.rect.left >= self.rect.left+40):
                     print("ARGGG")
                     self.lower_health(10)
                     print("Monster Health is " + str(self.health) + " points")
@@ -111,8 +112,8 @@ class monster_fighter_main:
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.hero = Hero('Hero', 100, 0, 300, 0)
-        self.monster = Monster("Monster", 50, 200, 0, 3)
+        self.hero = Hero('Hero', 100, 200, 200, 0, 300, 0) #name, health, height, width, x, y, vx
+        self.monster = Monster("Monster", 50, 200, 200, 200, 0, 1) #only moves when vx>1
         self.arrow_group = pygame.sprite.Group()
         #self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
