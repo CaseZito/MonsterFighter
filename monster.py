@@ -1,6 +1,5 @@
 """@authors: Mellie Z and Anthony K
 
-
 This is Monster Fighter, a simple arcade game where a hero
 shoots arrows at a mosnter.
 
@@ -17,6 +16,8 @@ from pygame.locals import *
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
     def __init__(self, name, damage, height, width, x, y, vy):
+        """ Initialize an Arrow with the specified damage, name, height, width,
+            and position (x,y) """
         pygame.sprite.Sprite.__init__(self)
         self.damage = damage
         self.name = name
@@ -36,15 +37,17 @@ class Arrow(pygame.sprite.Sprite):
                                                                         self.vy)
 
     def update(self):
+        """ Updates the state of the Arrow """
         self.rect.top -= self.vy #moves w/ constant v upwards
 
 class Cookie(Arrow): #damage is actually opposite for this class
     """Encodes the state of the hero's cookies in the game """
 
 class Fireball(Arrow):
-    """Encodes the state of the monster's fireballs in the game """
+    """Encodes the state of the monster's Fireballs in the game """
 
     def update(self):
+        """ Updates the state of the Fireball """
         self.rect.top += self.vy #moves w/ constant v upwards
 
 class Hero(pygame.sprite.Sprite):
@@ -68,7 +71,7 @@ class Hero(pygame.sprite.Sprite):
         self.health -= points
 
     def update(self, model):
-        """ update the state of the hero """
+        """ Updates the state of the hero """
         if self.alive() and pygame.sprite.spritecollide(self, model.fireball_group, True):
                 self.lower_health(10)
                 print('Ouch!')
@@ -89,14 +92,17 @@ class Monster(Hero): #framework for later
         self.health += points
 
     def shoot_fireball(self, model):
-        model.fireball = Fireball('Fireball', 10, 50, 50, self.rect.left, self.rect.top, 3)
+        """ Creates fireball, which monster then 'shoots'"""
+        centerx = self.rect.left + (self.rect.width/4) #to shoot fireball from center of monster
+        centery =  self.rect.top + 60
+        model.fireball = Fireball('Fireball', 10, 50, 50, centerx, centery, 3)
         model.fireball_group.add(model.fireball)
 
     def update(self, model):
         """updates state of the monster """
-        if self.rect.left >= 1100: #size of entry is 600 to 1100
+        if self.rect.left >= 1100: #monster switches direction near edge of screen
             self.vx = -1 #monster moves with constant speed
-        elif self.rect.left <= 600: #monster switches direction near edge of screen
+        elif self.rect.left <= 600: #size of end of tunnel is 600 to 1100
             self.vx = 1
 
         self.rect.left += self.vx
@@ -111,8 +117,9 @@ class Monster(Hero): #framework for later
 
 
 class monster_fighter_main:
+    """ Encodes the state of the game """
     def __init__(self, width, height):
-        """ Encodes the state of the game """
+        """ Initialize the game with the screen size and sprites """
         pygame.init()
         self.width = width
         self.height = height
@@ -173,7 +180,7 @@ class monster_fighter_main:
                 self.monster.kill()
                 print("You have killed the monster!")
                 time.sleep(.001)
-                sys.exit() #without this game can continue to run without monster 
+                sys.exit() #without this game can continue to run without monster
             if self.hero.health <= 0: #when hero dies
                 self.hero.kill()
                 print("GAME OVER")
