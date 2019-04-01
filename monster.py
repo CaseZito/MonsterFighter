@@ -3,6 +3,8 @@
 
 This is Monster Fighter, a simple arcade game where a hero
 shoots arrows at a mosnter.
+
+The images for these sprites and background are not our own.
 """
 
 import time
@@ -65,8 +67,12 @@ class Hero(pygame.sprite.Sprite):
         """ Lowers hero's health by given number of points"""
         self.health -= points
 
-    def update(self):
+    def update(self, model):
         """ update the state of the hero """
+        if self.alive() and pygame.sprite.spritecollide(self, model.fireball_group, True):
+                self.lower_health(10)
+                print('Ouch!')
+                print("Hero Health is " + str(self.health) + " points")
 
     def __str__(self):
         return self.name + " health =%f, height=%f, width=%f, x=%f, y=%f" % (self.health,
@@ -124,8 +130,8 @@ class monster_fighter_main:
 
     def update(self):
         """ Update the game state """
-        self.hero.update()
-        self.monster.update(self) #needs model for arrows and fireballs
+        self.hero.update(self) #needs model to detect fireball hit
+        self.monster.update(self) #needs model for arrow hits and shooting fireballs
         self.arrow_group.update()
         self.fireball_group.update()
 
@@ -163,9 +169,16 @@ class monster_fighter_main:
         dungeon_image, dungeon_rect = load_image('Dungeon.png', -1)
         self.loadsprites()
         while 1:
-            if self.monster.alive() and self.monster.health <= 0:
+            if self.monster.alive() and self.monster.health <= 0: #when monster dies
                 self.monster.kill()
-                print("You have defeated the monster!")
+                print("You have killed the monster!")
+                time.sleep(.001)
+                sys.exit() #without this game can continue to run without monster 
+            if self.hero.health <= 0: #when hero dies
+                self.hero.kill()
+                print("GAME OVER")
+                time.sleep(.001)
+                sys.exit()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
