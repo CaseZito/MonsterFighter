@@ -13,10 +13,10 @@ from pygame.locals import *
 
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
-    def __init__(self, damage, height, width, x, y, vy):
+    def __init__(self, name, damage, height, width, x, y, vy):
         pygame.sprite.Sprite.__init__(self)
         self.damage = damage
-        self.image, self.rect = load_image('arrow.png', -1)
+        self.image, self.rect = load_image(name+'.png', -1)
         self.image = pygame.transform.scale(self.image, (height,width))
         self.rect.height = height
         self.rect.width = width
@@ -25,7 +25,7 @@ class Arrow(pygame.sprite.Sprite):
         self.vy = vy
 
     def __str__(self):
-        return "Arrow height=%f, width=%f, x=%f, y=%f, vy=%f" % (self.rect.height,
+        return name + " height=%f, width=%f, x=%f, y=%f, vy=%f" % (self.rect.height,
                                                                  self.rect.width,
                                                                  self.rect.left,
                                                                  self.rect.top,
@@ -80,9 +80,9 @@ class Monster(Hero): #framework for later
         """ Raises monster's health by given number of points """
         self.health += points
 
-    #def shoot_fireball(self, model):
-    #    model.fireball = Fireball(10, 30, 10, self.rect.left, self.rect.top, 3)
-    #    model.fireball_group.add(model.fireball)
+    def shoot_fireball(self, model):
+        model.fireball = Fireball('Fireball', 10, 30, 10, self.rect.left, self.rect.top, 3)
+        model.fireball_group.add(model.fireball)
 
     def update(self, model, proj_group):
         """updates state of the monster """
@@ -119,11 +119,11 @@ class monster_fighter_main:
         self.hero = Hero('Hero', 100, 200, 200, 0, 300, 0) #name, health, height, width, x, y, vx
         self.monster = Monster("Monster", 50, 120, 120, 200, 0, 1) #only moves when vx>1
         self.arrow_group = pygame.sprite.Group()
-        #self.fireball_group = pygame.sprite.Group()
+        self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
 
     def shoot_arrow(self, x, y, vy):
-        self.arrow = Arrow(10, 30, 50, x, y, vy)
+        self.arrow = Arrow('Arrow', 10, 30, 50, x, y, vy)
         self.arrow_group.add(self.arrow)
 
     def update(self):
@@ -131,17 +131,19 @@ class monster_fighter_main:
         self.hero.update()
         self.monster.update(self, self.arrow_group)
         self.arrow_group.update()
-        #self.fireball_group.update()
-        self.hero_sprites.draw(self.screen)
-        self.monster_sprites.draw(self.screen)
-        for arrow in self.arrow_group.sprites():
-            self.arrow_sprites.draw(self.screen)
+        self.fireball_group.update()
 
     def LoadSprites(self):
         self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
+        self.hero_sprites.draw(self.screen)
         self.monster_sprites = pygame.sprite.RenderPlain((self.monster))
+        self.monster_sprites.draw(self.screen)
         for arrow in self.arrow_group.sprites():
             self.arrow_sprites = pygame.sprite.RenderPlain((arrow))
+            self.arrow_sprites.draw(self.screen)
+        for fireball in self.fireball_group.sprites():
+            self.fireball_sprites = pygame.sprite.RenderPlain((fireball))
+            self.fireball_sprites.draw(self.screen)
 
     def __str__(self):
         output_lines = []
@@ -149,6 +151,8 @@ class monster_fighter_main:
         output_lines.append(str(self.monster))
         for arrow in self.arrow_group.sprites():
             output_lines.append(str(arrow))
+        for fireball in self.fireball_group.sprites():
+            output_lines.append(str(fireball))
         # print one item per line
         return "\n".join(output_lines)
 
@@ -167,9 +171,9 @@ class monster_fighter_main:
                         if event.button == 1:
                             self.shoot_arrow(event.pos[0], self.hero.rect.top, 3)
             self.screen.fill(pygame.Color(0,0,0))
+            self.update()
             self.LoadSprites()
             time.sleep(.001)
-            self.update()
             pygame.display.flip()
 
 
