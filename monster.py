@@ -86,9 +86,9 @@ class Monster(Hero): #framework for later
 
     def update(self, model, proj_group):
         """updates state of the monster """
-        if self.rect.left >= 600: #size of screen is 0-640
+        if self.rect.left >= 1100: #size of screen is 0-640
             self.vx = -1 #monster moves with constant speed
-        elif self.rect.left < -20: #monster switches direction near edge of screen
+        elif self.rect.left < 600: #monster switches direction near edge of screen
             self.vx = 1
 
         self.rect.left += self.vx
@@ -116,8 +116,8 @@ class monster_fighter_main:
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.hero = Hero('Hero', 100, 200, 200, 0, 300, 0) #name, health, height, width, x, y, vx
-        self.monster = Monster("Monster", 50, 120, 120, 200, 0, 1) #only moves when vx>1
+        self.hero = Hero('Hero', 100, 320, 320, 0, 630, 0) #name, health, height, width, x, y, vx
+        self.monster = Monster("Monster", 50, 200, 200, 947, 220, 1) #only moves when vx>1
         self.arrow_group = pygame.sprite.Group()
         self.fireball_group = pygame.sprite.Group()
         #cookie_group = pygame.sprite.Group()
@@ -158,6 +158,7 @@ class monster_fighter_main:
 
     def MainLoop(self):
         print(self)
+        dungeon_image, dungeon_rect = load_image('Dungeon.png', -1)
         while 1:
             if self.monster.alive() and self.monster.health <= 0:
                 self.monster.kill()
@@ -170,11 +171,12 @@ class monster_fighter_main:
                 if event.type == pygame.locals.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             self.shoot_arrow(event.pos[0], self.hero.rect.top, 3)
-            self.screen.fill(pygame.Color(0,0,0))
+            self.screen.blit(dungeon_image, (0,0))
             self.update()
             self.LoadSprites()
-            time.sleep(.001)
             pygame.display.flip()
+            time.sleep(.001)
+
 
 
 
@@ -182,6 +184,6 @@ class monster_fighter_main:
 
 
 if __name__ == "__main__":
-    size = (640, 480)
+    size = (1874, 958)
     MainWindow = monster_fighter_main(size[0], size[1])
     MainWindow.MainLoop()
