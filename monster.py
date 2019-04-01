@@ -6,6 +6,7 @@ shoots arrows at a mosnter.
 """
 
 import time
+import random
 import pygame
 from helpers import *
 from pygame.locals import *
@@ -82,7 +83,7 @@ class Monster(Hero): #framework for later
         self.health += points
 
     def shoot_fireball(self, model):
-        model.fireball = Fireball('Fireball', 10, 30, 10, self.rect.left, self.rect.top, 3)
+        model.fireball = Fireball('Fireball', 10, 50, 50, self.rect.left, self.rect.top, 3)
         model.fireball_group.add(model.fireball)
 
     def update(self, model):
@@ -93,7 +94,8 @@ class Monster(Hero): #framework for later
             self.vx = 1
 
         self.rect.left += self.vx
-        #self.shoot_fireball(model)
+        if self.alive() and random.randrange(50) == 1:
+            self.shoot_fireball(model)
 
         #below code is for collision detection of monster and arrows
         if self.alive() and pygame.sprite.spritecollide(self, model.arrow_group, True):
