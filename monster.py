@@ -85,24 +85,21 @@ class Monster(Hero): #framework for later
         model.fireball = Fireball('Fireball', 10, 30, 10, self.rect.left, self.rect.top, 3)
         model.fireball_group.add(model.fireball)
 
-    def update(self, model, proj_group):
+    def update(self, model):
         """updates state of the monster """
-        if self.rect.left >= 1100: #size of screen is 0-640
+        if self.rect.left >= 1100: #size of entry is 600 to 1100
             self.vx = -1 #monster moves with constant speed
-        elif self.rect.left < 600: #monster switches direction near edge of screen
+        elif self.rect.left <= 600: #monster switches direction near edge of screen
             self.vx = 1
 
         self.rect.left += self.vx
         #self.shoot_fireball(model)
 
-        hero_hit = pygame.sprite.spritecollide(self, proj_group, True)
-        if hero_hit:
+        #below code is for collision detection of monster and arrows
+        if self.alive() and pygame.sprite.spritecollide(self, model.arrow_group, True):
                 self.lower_health(10)
                 print('ARGGG')
                 print("Monster Health is " + str(self.health) + " points")
-                #print(self)
-
-
 
 
 class monster_fighter_main:
@@ -126,15 +123,18 @@ class monster_fighter_main:
     def update(self):
         """ Update the game state """
         self.hero.update()
-        self.monster.update(self, self.arrow_group)
+        self.monster.update(self) #needs model for arrows and fireballs
         self.arrow_group.update()
         self.fireball_group.update()
 
-    def LoadSprites(self):
-        """ Loads and draws sprites """
+    def loadsprites(self):
+        """ Loads sprites """
         self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
-        self.hero_sprites.draw(self.screen)
         self.monster_sprites = pygame.sprite.RenderPlain((self.monster))
+
+    def updatesprites(self):
+        """ Draws updated and newly generated sprites """
+        self.hero_sprites.draw(self.screen)
         self.monster_sprites.draw(self.screen)
         for arrow in self.arrow_group.sprites():
             self.arrow_sprites = pygame.sprite.RenderPlain((arrow))
@@ -159,10 +159,10 @@ class monster_fighter_main:
         """ Runs the game which includes the controller, image loading, and updating """
         print(self)
         dungeon_image, dungeon_rect = load_image('Dungeon.png', -1)
+        self.loadsprites()
         while 1:
             if self.monster.alive() and self.monster.health <= 0:
                 self.monster.kill()
-                print("alive?" + str(self.monster.alive()))
                 print("You have defeated the monster!")
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -175,7 +175,7 @@ class monster_fighter_main:
             self.screen.blit(dungeon_image, (0,0))
             time.sleep(.001)
             self.update()
-            self.LoadSprites()
+            self.updatesprites()
             pygame.display.flip()
 
 
