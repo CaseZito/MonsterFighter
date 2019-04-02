@@ -5,7 +5,13 @@ Left click to shoot arrows, right click to shoot cookies. Avoid the
 monster fireballs!
 
 The images for these sprites and background are not our own.
+
+Hero link: https://www.pixilart.com/art/pixel-knight-49ba01ba95b0235
+(Couldn't find original source^)
+Monster link: https://forum.dungeonboss.com/discussion/3253/dungeon-boss-hero-pixel-art
+Arrow link: unknown
 Cookie link: http://pixelartmaker.com/art/794909cfeff2fe7
+Fireball link: https://minecraft.novaskin.me/skin/1265863046/fireball-png
 """
 
 import time
