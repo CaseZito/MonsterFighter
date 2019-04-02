@@ -1,9 +1,11 @@
 """@authors: Mellie Z and Anthony K
 
-This is Monster Fighter, a simple arcade game where a hero
-shoots arrows at a mosnter.
+This is Monster Fighter, a simple arcade game. You are the hero.
+Left click to shoot arrows, right click to shoot cookies. Avoid the
+monster fireballs!
 
 The images for these sprites and background are not our own.
+Cookie link: http://pixelartmaker.com/art/794909cfeff2fe7
 """
 
 import time
@@ -115,6 +117,12 @@ class Monster(Hero): #framework for later
                 print('ARGGG')
                 print("Monster Health is " + str(self.health) + " points")
 
+        #below code is for collision detection of monster and cookie
+        if self.alive() and pygame.sprite.spritecollide(self, model.cookie_group, True):
+                self.raise_health(10)
+                print('Oh? Thanks..')
+                print("Monster Health is " + str(self.health) + " points")
+
 
 class monster_fighter_main:
     """ Encodes the state of the game """
@@ -128,12 +136,17 @@ class monster_fighter_main:
         self.monster = Monster("Monster", 50, 200, 200, 947, 220, 1)
         self.arrow_group = pygame.sprite.Group()
         self.fireball_group = pygame.sprite.Group()
-        #cookie_group = pygame.sprite.Group()
+        self.cookie_group = pygame.sprite.Group()
 
     def shoot_arrow(self, x, y, vy):
         """ Creates an arrow that is 'shot' by the hero """
         self.arrow = Arrow('Arrow', 10, 30, 50, x, y, vy)
         self.arrow_group.add(self.arrow)
+
+    def shoot_cookie(self, x, y, vy):
+        """ Creates a cookie that is 'shot' by the hero """
+        self.cookie = Cookie('Cookie', 10, 50, 50, x, y, vy)
+        self.cookie_group.add(self.cookie)
 
     def update(self):
         """ Update the game state """
@@ -141,13 +154,14 @@ class monster_fighter_main:
         self.monster.update(self) #needs model for arrow hits and shooting fireballs
         self.arrow_group.update()
         self.fireball_group.update()
+        self.cookie_group.update()
 
-    def loadsprites(self):
+    def load_sprites(self):
         """ Loads sprites """
         self.hero_sprites = pygame.sprite.RenderPlain((self.hero))
         self.monster_sprites = pygame.sprite.RenderPlain((self.monster))
 
-    def updatesprites(self):
+    def update_sprites(self):
         """ Draws updated and newly generated sprites """
         self.hero_sprites.draw(self.screen)
         self.monster_sprites.draw(self.screen)
@@ -157,6 +171,29 @@ class monster_fighter_main:
         for fireball in self.fireball_group.sprites():
             self.fireball_sprites = pygame.sprite.RenderPlain((fireball))
             self.fireball_sprites.draw(self.screen)
+        for cookie in self.cookie_group.sprites():
+            self.cookie_sprites = pygame.sprite.RenderPlain((cookie))
+            self.cookie_sprites.draw(self.screen)
+
+    def check_end_event(self):
+        """ Checks if any of end events of game occur """
+        if self.monster.alive() and self.monster.health <= 0: #monster dies
+            self.monster.kill()
+            text = "You have killed the monster!"
+            exit = True #without this game can continue to run without monster
+        elif self.monster.alive() and self.monster.health >= 100: #monster friended
+            self.monster.rect.top -= 20 #monster walks off screen
+            self.monster.kill()
+            text = "The monster is your friend and appears to have walked away"
+            exit = True #without this game can continue to run without monster
+        elif self.hero.health <= 0: #hero dies
+            self.hero.kill()
+            text = "GAME OVER"
+            exit = True
+        else:
+            text = ""
+            exit = False
+        return (text, exit)
 
     def __str__(self):
         """ Prints sprites, used for debugging """
@@ -167,6 +204,8 @@ class monster_fighter_main:
             output_lines.append(str(arrow))
         for fireball in self.fireball_group.sprites():
             output_lines.append(str(fireball))
+        for cookie in self.cookie_group.sprites():
+            output_lines.append(str(cookie))
         # print one item per line
         return "\n".join(output_lines)
 
@@ -174,18 +213,8 @@ class monster_fighter_main:
         """ Runs the game which includes the controller, image loading, and updating """
         print(self)
         dungeon_image, dungeon_rect = load_image('Dungeon.png', -1)
-        self.loadsprites()
+        self.load_sprites()
         while 1:
-            if self.monster.alive() and self.monster.health <= 0: #when monster dies
-                self.monster.kill()
-                print("You have killed the monster!")
-                time.sleep(.001)
-                sys.exit() #without this game can continue to run without monster
-            if self.hero.health <= 0: #when hero dies
-                self.hero.kill()
-                print("GAME OVER")
-                time.sleep(.001)
-                sys.exit()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
@@ -194,11 +223,22 @@ class monster_fighter_main:
                 if event.type == pygame.locals.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             self.shoot_arrow(event.pos[0], self.hero.rect.top, 3)
+                        if event.button == 3:
+                            self.shoot_cookie(event.pos[0], self.hero.rect.top, 3)
             self.screen.blit(dungeon_image, (0,0))
             time.sleep(.001)
-            self.update()
-            self.updatesprites()
+
+            text, exit = self.check_end_event() #checks if ending event occurs
+            if text != "": #prints ending text if ending event occurs
+                print(text)
+
+            self.update() #updates state of game
+            self.update_sprites()
             pygame.display.flip()
+
+            if exit == True: #exits game if ending event occurs
+                time.sleep(1)
+                sys.exit()
 
 
 if __name__ == "__main__":
