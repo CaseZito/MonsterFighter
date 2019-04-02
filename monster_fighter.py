@@ -14,12 +14,19 @@ Cookie link: http://pixelartmaker.com/art/794909cfeff2fe7
 Fireball link: https://minecraft.novaskin.me/skin/1265863046/fireball-png
 """
 
+import os, sys
 import time
 import random
 import pygame
-from helpers import *
 from pygame.locals import *
 
+def load_image(name):
+    """ Loads images and makes rectangles for sprites """
+    image = pygame.image.load(name)
+    image = image.convert()
+    colorkey = image.get_at((0,0))
+    image.set_colorkey(colorkey, RLEACCEL)
+    return image, image.get_rect()
 
 class Arrow(pygame.sprite.Sprite):
     """ Encodes the state of the hero's arrows in the game """
@@ -29,7 +36,7 @@ class Arrow(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.damage = damage
         self.name = name
-        self.image, self.rect = load_image(name+'.png', -1)
+        self.image, self.rect = load_image(name+'.png')
         self.image = pygame.transform.scale(self.image, (height,width))
         self.rect.height = height
         self.rect.width = width
@@ -64,7 +71,7 @@ class Hero(pygame.sprite.Sprite):
         """ Initialize a hero with the specified health, height, width,
             and position (x,y) """
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image(name+'.png', -1)
+        self.image, self.rect = load_image(name+'.png')
         self.image = pygame.transform.scale(self.image, (height,width))
         self.rect.height = height
         self.rect.width = width
@@ -109,9 +116,9 @@ class Monster(Hero): #framework for later
     def update(self, model):
         """updates state of the monster """
         if self.rect.left >= 1100: #monster switches direction near edge of screen
-            self.vx = -1 #monster moves with constant speed
+            self.vx = -2 #monster moves with constant speed
         elif self.rect.left <= 600: #size of end of tunnel is 600 to 1100
-            self.vx = 1
+            self.vx = 2
 
         self.rect.left += self.vx
         if self.alive() and random.randrange(50) == 1:
@@ -138,8 +145,8 @@ class Monster_Fighter_Main:
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.hero = Hero('Hero', 100, 320, 320, 0, 630, 0) #name, health, height, width, x, y, vx
-        self.monster = Monster("Monster", 50, 200, 200, 947, 220, 1)
+        self.hero = Hero('Hero', 250, 320, 320, 0, 630, 0) #name, health, height, width, x, y, vx
+        self.monster = Monster("Monster", 150, 200, 200, 947, 220, 2)
         self.arrow_group = pygame.sprite.Group()
         self.fireball_group = pygame.sprite.Group()
         self.cookie_group = pygame.sprite.Group()
@@ -187,7 +194,7 @@ class Monster_Fighter_Main:
             self.monster.kill()
             text = "You have killed the monster!"
             exit = True #without this game can continue to run without monster
-        elif self.monster.alive() and self.monster.health >= 100: #monster friended
+        elif self.monster.alive() and self.monster.health >= 300: #monster friended
             self.monster.rect.top -= 20 #monster walks off screen
             self.monster.kill()
             text = "The monster is your friend and appears to have walked away"
@@ -218,7 +225,7 @@ class Monster_Fighter_Main:
     def MainLoop(self):
         """ Runs the game which includes the controller, image loading, and updating """
         print(self)
-        dungeon_image, dungeon_rect = load_image('Dungeon.png', -1)
+        dungeon_image, dungeon_rect = load_image('Dungeon.png')
         self.load_sprites()
         while 1:
             for event in pygame.event.get():
