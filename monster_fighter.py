@@ -130,7 +130,7 @@ class Monster(Hero): #framework for later
                 print("Monster Health is " + str(self.health) + " points")
 
 
-class monster_fighter_main:
+class Monster_Fighter_Main:
     """ Encodes the state of the game """
     def __init__(self, width, height):
         """ Initialize the game with the screen size and sprites """
@@ -249,5 +249,5 @@ class monster_fighter_main:
 
 if __name__ == "__main__":
     size = (1874, 958)
-    MainWindow = monster_fighter_main(size[0], size[1])
+    MainWindow = Monster_Fighter_Main(size[0], size[1])
     MainWindow.MainLoop()
