@@ -63,7 +63,7 @@ class Fireball(Arrow):
 
     def update(self):
         """ Updates the state of the Fireball """
-        self.rect.top += self.vy #moves w/ constant v upwards
+        self.rect.top += self.vy #moves w/ constant v downwards
 
 class Hero(pygame.sprite.Sprite):
     """ Encodes the state of the hero in the game """
@@ -86,7 +86,7 @@ class Hero(pygame.sprite.Sprite):
         self.health -= points
 
     def update(self, model):
-        """ Updates the state of the hero """
+        """ Updates the state of the hero, checks for collisions and lowers health if needed"""
         if self.alive() and pygame.sprite.spritecollide(self, model.fireball_group, True):
                 self.lower_health(10)
                 print('Ouch!')
@@ -102,7 +102,7 @@ class Hero(pygame.sprite.Sprite):
 class Monster(Hero): #framework for later
     """ Encodes the state of the monster in the game """
 
-    def raise_health(self, points):
+    def raise_health(self, points): #raise health if monster is hit by a cookie
         """ Raises monster's health by given number of points """
         self.health += points
 
@@ -120,17 +120,17 @@ class Monster(Hero): #framework for later
         elif self.rect.left <= 600: #size of end of tunnel is 600 to 1100
             self.vx = 2
 
-        self.rect.left += self.vx
-        if self.alive() and random.randrange(50) == 1:
+        self.rect.left += self.vx #moves in the x direction by moving the left side of the rect
+        if self.alive() and random.randrange(50) == 1: #shoots fireballs randomly
             self.shoot_fireball(model)
 
-        #below code is for collision detection of monster and arrows
+        #check for collision of monster and arrow, prints and lowers health in the case of collision
         if self.alive() and pygame.sprite.spritecollide(self, model.arrow_group, True):
                 self.lower_health(10)
                 print('ARGGG')
                 print("Monster Health is " + str(self.health) + " points")
 
-        #below code is for collision detection of monster and cookie
+        #checks for collision of monster and cookie, prints and raises health in the case of collision
         if self.alive() and pygame.sprite.spritecollide(self, model.cookie_group, True):
                 self.raise_health(10)
                 print('Oh? Thanks..')
@@ -145,9 +145,9 @@ class Monster_Fighter_Main:
         self.width = width
         self.height = height
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.hero = Hero('Hero', 250, 320, 320, 0, 630, 0) #name, health, height, width, x, y, vx
-        self.monster = Monster("Monster", 150, 200, 200, 947, 220, 2)
-        self.arrow_group = pygame.sprite.Group()
+        self.hero = Hero('Hero', 250, 320, 320, 0, 630, 0) #Hero with corresponding name, health, height, width, x, y, vx
+        self.monster = Monster("Monster", 150, 200, 200, 947, 220, 2) #Monster with corresponding name, health, height, width, x, y, vx
+        self.arrow_group = pygame.sprite.Group() #Pygame groups help classify pygame sprites
         self.fireball_group = pygame.sprite.Group()
         self.cookie_group = pygame.sprite.Group()
 
