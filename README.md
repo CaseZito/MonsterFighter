@@ -4,7 +4,7 @@ cookies at the 'monster'. The 'monster' moves back and forth at constant speed
 and shoots fireballs as it moves. The health of the hero and monster print out
 to terminal, but do not yet display on the game screen. Have fun!
 
-![Example of Game Play](https://github.com/sd19spring/MonsterFighter/blob/master/Example_game.png)\n
+![Example of Game Play](https://github.com/sd19spring/MonsterFighter/blob/master/Example_game.png)
 
 ## Authors
 @MellieZito and @anthonykrich
