@@ -7,7 +7,7 @@ to terminal, but do not yet display on the game screen. Have fun!
 ![Example of Game Play](https://github.com/sd19spring/MonsterFighter/blob/master/Example_game.png)
 
 ## Authors
-@CaseZito and @anthonykrich
+@RileyZito and @anthonykrich
 
 ## Set up
 The library for pygame needs to be downloaded before running the game.
